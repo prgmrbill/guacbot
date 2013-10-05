@@ -63,6 +63,60 @@ logger.getRandomQuote = function (nick, searchQuery, callback) {
         }
     });
     
+logger.getFirstQuote = function (nick, searchQuery, callback) {
+    var cols      = ['message'];
+    var searchQry = searchQuery ? searchQuery.trim()  : '';
+    var searchCls = searchQry   ? ' AND message LIKE ?' : '';
+    var params    = [nick];
+    
+    if (searchCls) {
+        params.push('%' + searchQry + '%');
+    }
+    
+    var q    = ' SELECT ';
+        q   += cols.join(',');
+        q   += ' FROM logs';
+        q   += ' WHERE 1=1';
+        q   += ' AND nick = ?';
+        q   += searchCls;
+        q   += ' ORDER BY ts ASC()';
+        q   += ' LIMIT 1';
+    
+    var parsedQry = db.connection.query(q, params, function (err, rows, fields) {
+        if (err) {
+            console.log('logger error: ' + err);
+        } else {
+            callback(rows[0], err);
+        }
+    });
+    
+logger.getLastQuote = function (nick, searchQuery, callback) {
+    var cols      = ['message'];
+    var searchQry = searchQuery ? searchQuery.trim()  : '';
+    var searchCls = searchQry   ? ' AND message LIKE ?' : '';
+    var params    = [nick];
+    
+    if (searchCls) {
+        params.push('%' + searchQry + '%');
+    }
+    
+    var q    = ' SELECT ';
+        q   += cols.join(',');
+        q   += ' FROM logs';
+        q   += ' WHERE 1=1';
+        q   += ' AND nick = ?';
+        q   += searchCls;
+        q   += ' ORDER BY ts DESC()';
+        q   += ' LIMIT 1';
+    
+    var parsedQry = db.connection.query(q, params, function (err, rows, fields) {
+        if (err) {
+            console.log('logger error: ' + err);
+        } else {
+            callback(rows[0], err);
+        }
+    });
+    
     //console.log(params);
     //console.log(parsedQry.sql);
 };

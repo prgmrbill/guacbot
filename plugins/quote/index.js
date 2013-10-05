@@ -22,6 +22,7 @@ quote.init = function (client) {
                     var words    = parser.splitMessageIntoWords(text);
                     var command  = words[1];
                     
+                    // To do:  Generalize and clean these three up
                     if (command === 'quote') {
                         var targetNick = words[2] && words[2].length > 0 ? words[2].trim() : nick;
                         var searchQry  = false;
@@ -31,6 +32,44 @@ quote.init = function (client) {
                         } 
                         
                         quote.getRandomQuote(targetNick, searchQry, function (result, err) {
+                            if (!err && result) {
+                                var msg  = '<' + targetNick + '> ';
+                                    msg += result.message;
+                                
+                                client.say(channel, msg);
+                            } else {
+                                client.say(channel, 'no quotes found');
+                            }
+                        });                        
+                    }
+                    else if (command === 'first') {
+                        var targetNick = words[2] && words[2].length > 0 ? words[2].trim() : nick;
+                        var searchQry  = false;
+                        
+                        if (words.length >= 3) {
+                            searchQry = words.slice(3).join(' ');
+                        } 
+                        
+                        quote.getFirstQuote(targetNick, searchQry, function (result, err) {
+                            if (!err && result) {
+                                var msg  = '<' + targetNick + '> ';
+                                    msg += result.message;
+                                
+                                client.say(channel, msg);
+                            } else {
+                                client.say(channel, 'no quotes found');
+                            }
+                        });                        
+                    }
+                    else if (command === 'last') {
+                        var targetNick = words[2] && words[2].length > 0 ? words[2].trim() : nick;
+                        var searchQry  = false;
+                        
+                        if (words.length >= 3) {
+                            searchQry = words.slice(3).join(' ');
+                        } 
+                        
+                        quote.getLastQuote(targetNick, searchQry, function (result, err) {
                             if (!err && result) {
                                 var msg  = '<' + targetNick + '> ';
                                     msg += result.message;
